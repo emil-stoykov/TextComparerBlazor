@@ -3,7 +3,7 @@
     public class ResultService
     {
         public ResultService() {
-            Result = new Result();
+            this.Result = new Result();
         }
         public Result Result { get; set; }
 
@@ -16,18 +16,35 @@
         /// <returns></returns>
         public async Task<Result> CheckLines(string[] text1, string[] text2)
         {
-            Result.TotalLines = Math.Min(text1.Length, text2.Length);
+            this.Result.TotalLines = Math.Min(text1.Length, text2.Length);
 
             for (int line = 0; line < Result.TotalLines; line++)
             {
+                string textToCheck = text2[line];
+
                 if (!text1[line].Equals(text2[line]))
                 {
-                    Result.IsErrorless = false;
-                    Result.LinesWithError.Add(line);
+                    this.Result.IsErrorless = false;
+                    this.Result.LinesWithError.Add(line);
+
+                    char errorChar = '\0';
+                    for (int i = 0; i < Math.Min(text1[line].Length, text2[line].Length); i++)
+                    {
+                        if (text1[line][i] != text2[line][i])
+                        {
+                            errorChar = text2[line][i]; 
+                            break;
+                        }
+                    }
+
+                    string[] splitText = text2[line].Split(errorChar);
+                    textToCheck = splitText[0] + "<span style='background-color: lightcoral'>" + splitText[1] + "</span>";
                 } 
+
+                this.Result.ModifiedText.Concat(textToCheck);
             }
 
-            return await Task.FromResult(Result);
+            return await Task.FromResult(this.Result);
         }
     }
 }

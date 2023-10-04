@@ -1,4 +1,6 @@
-﻿namespace TextComparer.Data
+﻿using static TextComparer.Common.GeneralConstants;
+
+namespace TextComparer.Data
 {
     public class ResultService
     {
@@ -38,7 +40,7 @@
                     }
 
                     string[] splitText = text2[line].Split(errorChar);
-                    textToCheck = splitText[0] + "<span style='background-color: lightcoral'>" + splitText[1] + "</span>";
+                    textToCheck = splitText[0] + SpanStart + splitText[1] + SpanEnd;
                 } 
 
                 this.Result.ModifiedText.Concat(textToCheck);

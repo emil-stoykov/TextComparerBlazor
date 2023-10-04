@@ -1,0 +1,9 @@
+.btn-compare {
+    background-color: rgb(131, 32, 131);
+    color: white;
+}
+
+.btn-compare:hover {
+    background-color: rgb(85, 7, 85);
+    color: white;
+}

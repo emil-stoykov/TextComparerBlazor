@@ -19,17 +19,17 @@ namespace TextComparer.Data
         public async Task<Result> CheckLines(string[] text1, string[] text2)
         {
             this.Result.TotalLines = Math.Min(text1.Length, text2.Length);
-
+            string textToCheck = string.Empty;
+            char errorChar = '\0';
             for (int line = 0; line < Result.TotalLines; line++)
             {
-                string textToCheck = text2[line];
+                textToCheck = text2[line];
 
                 if (!text1[line].Equals(text2[line]))
                 {
                     this.Result.IsErrorless = false;
                     this.Result.LinesWithError.Add(line);
 
-                    char errorChar = '\0';
                     for (int i = 0; i < Math.Min(text1[line].Length, text2[line].Length); i++)
                     {
                         if (text1[line][i] != text2[line][i])

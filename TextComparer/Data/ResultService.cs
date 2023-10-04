@@ -18,9 +18,10 @@ namespace TextComparer.Data
         /// <returns></returns>
         public async Task<Result> CheckLines(string[] text1, string[] text2)
         {
-            this.Result.TotalLines = Math.Min(text1.Length, text2.Length);
             string textToCheck = string.Empty;
             char errorChar = '\0';
+            this.Result.TotalLines = Math.Min(text1.Length, text2.Length);
+
             for (int line = 0; line < Result.TotalLines; line++)
             {
                 textToCheck = text2[line];
@@ -30,23 +31,32 @@ namespace TextComparer.Data
                     this.Result.IsErrorless = false;
                     this.Result.LinesWithError.Add(line);
 
-                    for (int i = 0; i < Math.Min(text1[line].Length, text2[line].Length); i++)
-                    {
-                        if (text1[line][i] != text2[line][i])
-                        {
-                            errorChar = text2[line][i]; 
-                            break;
-                        }
-                    }
+                    errorChar = FindErrorPoint(text1[line], text2[line]);
 
-                    string[] splitText = text2[line].Split(errorChar);
-                    textToCheck = splitText[0] + SpanStart + splitText[1] + SpanEnd;
+                    if (errorChar != '\0')
+                    {
+                        string[] splitText = text2[line].Split(errorChar);
+                        textToCheck = splitText[0] + SpanStart + errorChar + splitText[1] + SpanEnd;
+                    }
                 } 
 
                 this.Result.ModifiedText.Concat(textToCheck);
             }
 
             return await Task.FromResult(this.Result);
+        }
+
+        private char FindErrorPoint(string text1, string text2)
+        {
+            for (int i = 0; i < Math.Min(text1.Length, text2.Length); i++)
+            {
+                if (text1[i] != text2[i])
+                {
+                    return text2[i];
+                }
+            }
+
+            return '\0';
         }
     }
 }

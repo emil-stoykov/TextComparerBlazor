@@ -13,5 +13,7 @@
         public int ErrorLines => LinesWithError.Count;
 
         public bool IsErrorless { get; set; } = true;
+
+        public string ModifiedText { get; set; } 
     }
 }

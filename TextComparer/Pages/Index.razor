@@ -21,8 +21,8 @@
                                         @for (int i = 0; i < text1param.Length; i++)
                                         {
                                             <tr>
-                                                <th scope="row" style="width:2em;" class="bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
-                                                <th>@text1param[i]</th>
+                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
+                                                <th class="align-text-bottom">@text1param[i]</th>
                                             </tr>
                                         }
                                     </tbody>
@@ -37,8 +37,10 @@
                                     <tbody>
                                         @for (int i = 0; i < displayTextArr.GetLength(0); i++) {
                                             <tr>
-                                                <th scope="row" style="width:2em;" class="bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
-                                                <th>@displayTextArr[i,0]<span style="background-color:rgb(184, 151, 184);l">@displayTextArr[i,1]</span></th>
+                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
+                                                <th class="align-text-bottom">
+                                                    @displayTextArr[i,0]<span style="background-color:rgb(184, 151, 184);">@displayTextArr[i,1]</span>
+                                                </th>
                                             </tr>
                                         }
                                     </tbody>

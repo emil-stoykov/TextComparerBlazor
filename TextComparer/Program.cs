@@ -9,6 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ResultService>();
+builder.Services.AddSingleton<CompareText>();
 
 var app = builder.Build();
 

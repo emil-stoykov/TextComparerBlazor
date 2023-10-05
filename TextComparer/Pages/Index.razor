@@ -1,7 +1,6 @@
 ﻿@page "/"
 @inject ResultService resultService
 @inject CompareText compareText
-@using static TextComparer.Common.GeneralConstants;
 
 <PageTitle>Text Comparer</PageTitle>
 <div class="container-lg flex-wrap flex-sm-col flex-wrap" >
@@ -57,43 +56,47 @@
                     </div>
                 } else
                 {
-
-
-                        <div class="col-auto col-lg-6">
-                            <div class="p-2 form-floating">
-                                <textarea class="form-control text-break border border-secondary bg-opacity-25" 
-                                style="resize:none;height:500px;max-height:500px;min-height:150px;" 
-                                id="floatingTextarea1"
-                                required
-                                @bind="textInput1"
-                                spellcheck="false">
-                                </textarea>
-                                <label for="floatingTextarea1">Paste the first text here.</label>
+                    <EditForm Model="@compareText" OnInvalidSubmit=@ShowEmptyTextareaError OnValidSubmit=@CompareTextsAsync>
+                        <DataAnnotationsValidator/>
+                         <div class="row justify-content-center">
+                            <div class="col-auto col-lg-6">
+                                <div class="p-2 form-floating">
+                                    <label for="floatingTextarea1">Paste the first text here.</label>
+                                    <InputTextArea class="form-control text-break border border-secondary bg-opacity-25" 
+                                    style="resize:none;height:500px;max-height:500px;min-height:150px;" id="floatingTextarea1"
+                                    required spellcheck="false"
+                                    @bind-Value="compareText.FirstText">
+                                    </InputTextArea>
+                                    <ValidationMessage For="@(() => compareText.FirstText)"/>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-auto col-lg-6">
-                            <div class="p-2 form-floating">
-                                <textarea class="form-control text-break border border-secondary bg-opacity-25" 
-                                style="resize:none;height:500px;max-height:500px;min-height:150px;" 
-                                id="floatingTextarea2"
-                                @bind="textInput2"
-                                required
-                                spellcheck="false">
-                                </textarea>
-                                <label for="floatingTextarea2">Paste the second text here.</label>
+                            <div class="col-auto col-lg-6">
+                                <div class="p-2 form-floating">
+                                    <label for="floatingTextarea2">Paste the second text here.</label>
+                                    <InputTextArea class="form-control text-break border border-secondary bg-opacity-25" 
+                                    style="resize:none;height:500px;max-height:500px;min-height:150px;" 
+                                    id="floatingTextarea2" 
+                                    required spellcheck="false"
+                                    @bind-Value="compareText.SecondText">
+                                    </InputTextArea>
+                                    <ValidationMessage For="@(() => compareText.SecondText)" />
+                                </div>
                             </div>
-                        </div>
-                        <div class="row gy-3 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
-                            <div class="col-auto col-lg-2 text-end d-grid gap-1">
-                                <button @onclick="ResetTexts" class="btn btn-dark btn-lg">Clear Text</button>
+                            <div class="row gy-3 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
+                                <div class="col-auto col-lg-2 text-end d-grid gap-1">
+                                    <button @onclick="ResetTexts" class="btn btn-dark btn-lg">
+                                        Clear Text
+                                    </button>
+                                </div>
+                                <div class="col-auto col-lg-2 text-start d-grid gap-1">
+                                    <button type="submit" class="btn btn-compare btn-lg"
+                                            disabled="@(resultObj.ResultState == ResultStates.FINISHED)">
+                                        Compare
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-auto col-lg-2 text-start d-grid gap-1">
-                                <button @onclick="CompareTextsAsync" class="btn btn-compare btn-lg"
-                                        disabled="@(resultObj.ResultState == ResultStates.FINISHED)">
-                                    Compare
-                                </button>
-                            </div>
-                        </div>
+                         </div>
+                    </EditForm>
                 }
             </div>
         </div>
@@ -110,10 +113,12 @@
     public string[,] displayTextArr;
     private Popup popupRef;
 
-    // private void ShowEmptyTextareaError()
-    // {
-    //     popupRef.Show(EmptyTextareaError);
-    // }
+    private void ShowEmptyTextareaError()
+    {
+        popupRef.Show(EmptyTextareaError);
+        ResetTexts();
+        StateHasChanged();
+    }
 
     protected override void OnInitialized()
     {
@@ -124,8 +129,8 @@
     private async Task CompareTextsAsync()
     {
         StateHasChanged();
-        text1param = textInput1.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        text2param = textInput2.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        text1param = compareText.FirstText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        text2param = compareText.SecondText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         this.resultObj = await this.resultService.CheckLines(text1param, text2param);
         StateHasChanged();
         // multidimensional string for displaying the second text

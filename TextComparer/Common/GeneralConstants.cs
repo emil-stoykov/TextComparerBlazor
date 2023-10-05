@@ -10,5 +10,10 @@
         /// const string for closing a span element that highlights the error.
         /// </summary>
         public const string SpanEnd = "</span>";
+
+        /// <summary>
+        /// const string for showing the error message about the empty textfields.
+        /// </summary>
+        public const string EmptyTextareaError = "Both fields should not be empty.";
     }
 }

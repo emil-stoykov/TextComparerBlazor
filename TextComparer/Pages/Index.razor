@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject ResultService resultService
 @inject CompareText compareText
+@inject ClipboardService clipboardService
 
 <PageTitle>Text Comparer</PageTitle>
 <div class="container-lg flex-wrap flex-sm-col flex-wrap" >
@@ -26,7 +27,8 @@
                                                 <th class="align-text-bottom">@compareText.FirstTextArr[i]
                                                     @if (i == 0)
                                                     {
-                                                        <i class="fa-solid fa-copy pt-2 pe-2 position-absolute top-0 end-0"></i>
+                                                        <i @onclick="(() => CopyToClipboardAsync(TextEnum.FIRST))" 
+                                                        class="fa-solid fa-copy pt-2 pe-2 position-absolute top-0 end-0"></i>
                                                     }
                                                 </th>
                                             </tr>
@@ -42,12 +44,17 @@
                                 <table class="table table-sm table-borderless table-hover">
                                     <tbody>
                                         @for (int i = 0; i < displayTextArr.GetLength(0); i++) {
-                                            <tr>
+                                            <tr class="position-relative">
                                                 <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-bold">@(i + 1).</th>
                                                 <th class="align-text-bottom">
                                                     @displayTextArr[i,0]
                                                     @if (!string.IsNullOrEmpty(displayTextArr[i, 1])) {
                                                         <span style="background-color:rgb(184, 151, 184);">@displayTextArr[i,1]</span>
+                                                    }
+                                                    @if (i == 0)
+                                                    {
+                                                        <i @onclick="(() => CopyToClipboardAsync(TextEnum.SECOND))"
+                                                        class="fa-solid fa-copy pt-2 pe-2 position-absolute top-0 end-0"></i>
                                                     }
                                                 </th>
                                             </tr>
@@ -179,5 +186,18 @@
         this.resultObj = new Result();
         this.compareText = new CompareText();
     }
+
+    private async Task CopyToClipboardAsync(TextEnum copyTextValue)
+    {
+        try
+        {
+            await clipboardService.WriteTextAsync(compareText.GetFullText(copyTextValue));
+        } catch (Exception ex)
+        {
+            // TODO: fix the error handling in the mainlayout
+            throw new NotImplementedException();
+        }
+    }
+
 
 }

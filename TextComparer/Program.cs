@@ -10,7 +10,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ResultService>();
 builder.Services.AddSingleton<CompareText>();
-builder.Services.AddSingleton<ClipboardService>();
+builder.Services.AddScoped<ClipboardService>();
 
 var app = builder.Build();
 

@@ -19,11 +19,11 @@
                             <p class="text-break border rounded-1 border-secondary bg-opacity-25 overflow-auto" style="height:500px;max-height:500px">
                                 <table class="table table-sm table-borderless table-hover">
                                     <tbody>
-                                        @for (int i = 0; i < text1param.Length; i++)
+                                        @for (int i = 0; i < compareText.FirstTextArr.Length; i++)
                                         {
                                             <tr>
-                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
-                                                <th class="align-text-bottom">@text1param[i]</th>
+                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-bold">@(i + 1).</th>
+                                                <th class="align-text-bottom">@compareText.FirstTextArr[i]</th>
                                             </tr>
                                         }
                                     </tbody>
@@ -38,9 +38,12 @@
                                     <tbody>
                                         @for (int i = 0; i < displayTextArr.GetLength(0); i++) {
                                             <tr>
-                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-light">@(i + 1).</th>
+                                                <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-bold">@(i + 1).</th>
                                                 <th class="align-text-bottom">
-                                                    @displayTextArr[i,0]<span style="background-color:rgb(184, 151, 184);">@displayTextArr[i,1]</span>
+                                                    @displayTextArr[i,0]
+                                                    @if (!string.IsNullOrEmpty(displayTextArr[i, 1])) {
+                                                        <span style="background-color:rgb(184, 151, 184);">@displayTextArr[i,1]</span>
+                                                    }
                                                 </th>
                                             </tr>
                                         }
@@ -54,8 +57,7 @@
                             <button @onclick="ResetTexts" class="btn btn-dark btn-lg">Reset</button>
                         </div>
                     </div>
-                } else
-                {
+                } else {
                     <EditForm Model="@compareText" OnInvalidSubmit=@ShowEmptyTextareaError OnValidSubmit=@CompareTextsAsync>
                         <DataAnnotationsValidator/>
                          <div class="row justify-content-center">
@@ -65,9 +67,9 @@
                                     <InputTextArea class="form-control text-break border border-secondary bg-opacity-25" 
                                     style="resize:none;height:500px;max-height:500px;min-height:150px;" id="floatingTextarea1"
                                     required spellcheck="false"
-                                    @bind-Value="compareText.FirstText">
+                                    @bind-Value="compareText.FirstTextInput">
                                     </InputTextArea>
-                                    <ValidationMessage For="@(() => compareText.FirstText)"/>
+                                    <ValidationMessage For="@(() => compareText.FirstTextInput)"/>
                                 </div>
                             </div>
                             <div class="col-auto col-lg-6">
@@ -77,9 +79,9 @@
                                     style="resize:none;height:500px;max-height:500px;min-height:150px;" 
                                     id="floatingTextarea2" 
                                     required spellcheck="false"
-                                    @bind-Value="compareText.SecondText">
+                                    @bind-Value="compareText.SecondTextInput">
                                     </InputTextArea>
-                                    <ValidationMessage For="@(() => compareText.SecondText)" />
+                                    <ValidationMessage For="@(() => compareText.SecondTextInput)" />
                                 </div>
                             </div>
                             <div class="row gy-3 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
@@ -129,12 +131,15 @@
     private async Task CompareTextsAsync()
     {
         StateHasChanged();
-        text1param = compareText.FirstText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        text2param = compareText.SecondText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        this.resultObj = await this.resultService.CheckLines(text1param, text2param);
+
+        compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+        this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
+
         StateHasChanged();
         // multidimensional string for displaying the second text
-        displayTextArr = new string[text2param.Length ,2];
+        displayTextArr = new string[compareText.SecondTextArr.Length ,2];
 
         // iterate over the text until the largest index is reached
         if (this.resultObj.ErrorCount != 0)
@@ -144,9 +149,9 @@
                 string[] errorTxt = new string[2];
                 if (this.resultObj.LinesWithError.Contains(i))
                 {
-                    errorTxt = await this.resultService.MarkErrorPointAsync(text1param[i], text2param[i]);
+                    errorTxt = await this.resultService.MarkErrorPointAsync(compareText.FirstTextArr[i], compareText.SecondTextArr[i]);
                 } else {
-                    errorTxt = new string[] { text2param[i], string.Empty };
+                    errorTxt = new string[] { compareText.SecondTextArr[i], string.Empty };
                 }
 
                 displayTextArr[i, 0] = errorTxt[0];
@@ -155,10 +160,9 @@
         }
 
         // fill the rest of the array
-        for (int i = this.resultObj.ErrorCount != 0 ? this.resultObj.LinesWithError.Max() + 1 : 0; i < text2param.Length; i++)
+        for (int i = this.resultObj.ErrorCount != 0 ? this.resultObj.LinesWithError.Max() + 1 : 0; i < compareText.SecondTextArr.Length; i++)
         {
-            displayTextArr[i, 0] = text2param[i];
-            displayTextArr[i, 1] = string.Empty;
+            displayTextArr[i, 0] = compareText.SecondTextArr[i];
         }
         this.resultObj.ResultState = ResultStates.FINISHED;
         StateHasChanged();
@@ -166,8 +170,6 @@
 
     private void ResetTexts()
     {
-        textInput1 = string.Empty;
-        textInput2 = string.Empty;
         this.resultService = new ResultService();
         this.resultObj = new Result();
         this.compareText = new CompareText();

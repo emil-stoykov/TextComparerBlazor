@@ -6,11 +6,16 @@ namespace TextComparer.Data
     {
         [Required(ErrorMessage = "Text field cannot be empty.")]
         [StringLength(65025, ErrorMessage = "Cannot exceed the text threshold.")]
-        public string FirstText { get; set; }
+        public string FirstTextInput { get; set; }
 
         [Required(ErrorMessage = "Text field cannot be empty.")]
         [StringLength(65025, ErrorMessage = "Cannot exceed the text threshold.")]
-        public string SecondText { get; set; }  
+        public string SecondTextInput { get; set; }
 
+        [StringLength(65025, ErrorMessage = "Cannot exceed the text threshold.")]
+        public string[] FirstTextArr { get; set; }
+
+        [StringLength(65025, ErrorMessage = "Cannot exceed the text threshold.")]
+        public string[] SecondTextArr { get; set; }
     }
 }

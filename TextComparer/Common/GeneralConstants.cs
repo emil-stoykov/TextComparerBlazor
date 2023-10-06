@@ -15,5 +15,9 @@
         /// const string for showing the error message about the empty textfields.
         /// </summary>
         public const string EmptyTextareaError = "Both fields should not be empty.";
+
+        public const string NotifNoErrors = "No errors were found.";
+
+        public const string NotifWithErrors = "Total errors: ";
     }
 }

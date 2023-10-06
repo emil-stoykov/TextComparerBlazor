@@ -5,25 +5,29 @@
 
 <PageTitle>Text Comparer</PageTitle>
 <div class="container-lg flex-wrap flex-sm-col flex-wrap" >
-    <div class="p-4 m-3 pt-3 pb-3 justify-content-center align-content-center">
+    <div class="p-3 m-3 pt-2 pb-3 justify-content-center align-content-center">
         <h1 class="text-center display-1 fw-bold">Text Comparer</h1>
     </div>
     <div class="row justify-content-center align-content-center">
-        <div class="col col-12 border border-2 border-dark border-rounded rounded-2">
+        <div class="col col-12 border border-3 border-dark border-rounded rounded-2">
             <Popup @ref="popupRef" />
-            <div class="row pt-3 mt-3 align-items-stretch justify-content-center flex-lg-row flex-column">
+            <div class="row pt-2 mt-2 align-items-stretch justify-content-center flex-lg-row flex-column">
                 @if (this.resultObj.ResultState == ResultStates.PROCESSING) {
                     <p class="fs-1 text-center">Loading...</p>
                 } else if (this.resultObj.ResultState == ResultStates.FINISHED) {
+                    <div class="row gap-3 ps-3 m-2 align-items-center justify-content-start">
+                        <div class="col-auto col-lg-3">
+                            <NotificationMessages Message="@(this.resultObj.ErrorCount != 0 ? $"{NotifWithErrors}{this.resultObj.ErrorCount}" : NotifNoErrors)"></NotificationMessages>
+                        </div>
+                    </div>
                     <div class="col-auto col-lg-6">
                         <div class="p-2 pb-0">
                             <Tooltip Text="@tooltipCopyText">
                                 <i @onclick="(() => CopyToClipboardAsync(TextEnum.FIRST))"
                                 @onmouseover="(() => SetCopyIcon(true, 0))" @onmouseout="(() => SetCopyIcon(false, 0))"
-                                class="@copyIcons[0] ps-1 pb-4" style="cursor: pointer"></i>
+                                class="@copyIcons[0] ps-1 pb-2" style="cursor: pointer"></i>
                             </Tooltip>
-
-                            <p class="text-break border rounded-1 border-secondary bg-opacity-25 overflow-auto" style="height:500px;max-height:500px">
+                            <p class="text-break border border-2 rounded-1 border-secondary bg-opacity-25 overflow-auto" style="height:500px;max-height:500px">
                                 <table class="table table-sm table-borderless table-hover">
                                     <tbody>
                                         @for (int i = 0; i < compareText.FirstTextArr.Length; i++)
@@ -43,9 +47,9 @@
                             <Tooltip Text="@tooltipCopyText">
                                 <i @onclick="(() => CopyToClipboardAsync(TextEnum.FIRST))"
                                 @onmouseover="(() => SetCopyIcon(true, 1))" @onmouseout="(() => SetCopyIcon(false, 1))"
-                                class="@copyIcons[1] ps-1 pb-4" style="cursor: pointer"></i>
+                                class="@copyIcons[1] ps-1 pb-2" style="cursor: pointer"></i>
                             </Tooltip>
-                            <p class="text-break border rounded-1 border-secondary bg-opacity-25 overflow-auto" style="height:500px;max-height:500px">
+                            <p class="text-break border border-2 rounded-1 border-secondary bg-opacity-25 overflow-auto" style="height:500px;max-height:500px">
                                 <table class="table table-sm table-borderless table-hover">
                                     <tbody>
                                         @for (int i = 0; i < displayTextArr.GetLength(0); i++) {
@@ -65,7 +69,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="row gy-3 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
+                    <div class="row gy-1 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
                         <div class="col-auto col-lg-2 text-end d-grid gap-1">
                             <button @onclick="ResetTexts" class="btn btn-dark btn-lg">Reset</button>
                         </div>
@@ -97,7 +101,7 @@
                                     <ValidationMessage For="@(() => compareText.SecondTextInput)" />
                                 </div>
                             </div>
-                            <div class="row gy-3 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
+                            <div class="row gy-1 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
                                 <div class="col-auto col-lg-2 text-end d-grid gap-1">
                                     <button @onclick="ResetTexts" class="btn btn-dark btn-lg">
                                         Clear Text
@@ -123,7 +127,6 @@
     private Result resultObj = new Result();
     public string[,] displayTextArr;
     private Popup popupRef;
-    private bool isHovering = false;
     private string[] copyIcons = { "fa-regular fa-copy", "fa-regular fa-copy" };
     private string tooltipCopyText = "Copy text";
     public string highlightErrorLine;
@@ -208,8 +211,7 @@
 
     private void SetCopyIcon(bool val, int idx)
     {
-        isHovering = val;
-        copyIcons[idx] = isHovering ? "fa-solid fa-copy" : "fa-regular fa-copy";
+        copyIcons[idx] = val ? "fa-solid fa-copy" : "fa-regular fa-copy";
         tooltipCopyText = "Copy text";
     }
 }

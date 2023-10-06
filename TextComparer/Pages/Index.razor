@@ -143,39 +143,44 @@
     {
         StateHasChanged();
 
-        compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        try {
+            compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-        this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
+            this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
 
-        StateHasChanged();
-        // multidimensional string for displaying the second text
-        displayTextArr = new string[compareText.SecondTextArr.Length ,2];
+            StateHasChanged();
+            // multidimensional string for displaying the second text
+            displayTextArr = new string[compareText.SecondTextArr.Length ,2];
 
-        // iterate over the text until the largest index is reached
-        if (this.resultObj.ErrorCount != 0)
-        {
-            for (int i = 0; i <= this.resultObj.LinesWithError.Max(); i++)
+            // iterate over the text until the largest index is reached
+            if (this.resultObj.ErrorCount != 0)
             {
-                string[] errorTxt = new string[2];
-                if (this.resultObj.LinesWithError.Contains(i))
+                for (int i = 0; i <= this.resultObj.LinesWithError.Max(); i++)
                 {
-                    errorTxt = await this.resultService.MarkErrorPointAsync(compareText.FirstTextArr[i], compareText.SecondTextArr[i]);
-                } else {
-                    errorTxt = new string[] { compareText.SecondTextArr[i], string.Empty };
-                }
+                    string[] errorTxt = new string[2];
+                    if (this.resultObj.LinesWithError.Contains(i))
+                    {
+                        errorTxt = await this.resultService.MarkErrorPointAsync(compareText.FirstTextArr[i], compareText.SecondTextArr[i]);
+                    } else {
+                        errorTxt = new string[] { compareText.SecondTextArr[i], string.Empty };
+                    }
 
-                displayTextArr[i, 0] = errorTxt[0];
-                displayTextArr[i, 1] = errorTxt[1];
-            }            
-        }
+                    displayTextArr[i, 0] = errorTxt[0];
+                    displayTextArr[i, 1] = errorTxt[1];
+                }            
+            }
 
-        // fill the rest of the array
-        for (int i = this.resultObj.ErrorCount != 0 ? this.resultObj.LinesWithError.Max() + 1 : 0; i < compareText.SecondTextArr.Length; i++)
-        {
-            displayTextArr[i, 0] = compareText.SecondTextArr[i];
+            // fill the rest of the array
+            for (int i = this.resultObj.ErrorCount != 0 ? this.resultObj.LinesWithError.Max() + 1 : 0; i < compareText.SecondTextArr.Length; i++)
+            {
+                displayTextArr[i, 0] = compareText.SecondTextArr[i];
+            }
+            this.resultObj.ResultState = ResultStates.FINISHED;
+
+        } catch {
+            // TODO: Fix the error handling
         }
-        this.resultObj.ResultState = ResultStates.FINISHED;
         StateHasChanged();
     }
 

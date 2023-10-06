@@ -25,7 +25,7 @@ namespace TextComparer.Data
 
             for (int line = 0; line < Result.TotalLines; line++)
             {
-                if (!text1[line].Equals(text2[line]))
+                if (!text1[line].Equals(text2[line]) || !text1[line].Length.Equals(text2[line].Length))
                 {
                     this.Result.LinesWithError.Add(line);
                 }

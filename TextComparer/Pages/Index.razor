@@ -21,12 +21,12 @@
                                     <tbody>
                                         @for (int i = 0; i < compareText.FirstTextArr.Length; i++)
                                         {
-                                            <tr>
+                                            <tr class="position-relative">
                                                 <th scope="row" style="width:2em;" class="align-text-bottom bg-secondary bg-opacity-25 fw-bold">@(i + 1).</th>
                                                 <th class="align-text-bottom">@compareText.FirstTextArr[i]
                                                     @if (i == 0)
                                                     {
-                                                        <i class="fa-solid fa-copy"></i>
+                                                        <i class="fa-solid fa-copy pt-2 pe-2 position-absolute top-0 end-0"></i>
                                                     }
                                                 </th>
                                             </tr>

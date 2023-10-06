@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 } else {
-                    <EditForm Model="@compareText" OnInvalidSubmit=@ShowEmptyTextareaError OnValidSubmit=@CompareTextsAsync>
+                    <EditForm Model="@compareText" OnInvalidSubmit=@ResetTexts OnValidSubmit=@CompareTextsAsync>
                         <DataAnnotationsValidator/>
                          <div class="row justify-content-center">
                             <div class="col-auto col-lg-6">
@@ -131,13 +131,6 @@
     private string tooltipCopyText = "Copy text";
     public string highlightErrorLine;
 
-    private void ShowEmptyTextareaError()
-    {
-        popupRef.Show(EmptyTextareaError);
-        ResetTexts();
-        StateHasChanged();
-    }
-
     protected override void OnInitialized()
     {
         this.resultService = new ResultService();
@@ -148,44 +141,17 @@
     {
         StateHasChanged();
 
-        try {
-            compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-            this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
+        this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
 
-            StateHasChanged();
-            // multidimensional string for displaying the second text
-            displayTextArr = new string[compareText.SecondTextArr.Length ,2];
+        StateHasChanged();
 
-            // iterate over the text until the largest index is reached
-            if (this.resultObj.ErrorCount != 0)
-            {
-                for (int i = 0; i <= this.resultObj.LinesWithError.Max(); i++)
-                {
-                    string[] errorTxt = new string[2];
-                    if (this.resultObj.LinesWithError.Contains(i))
-                    {
-                        errorTxt = await this.resultService.MarkErrorPointAsync(compareText.FirstTextArr[i], compareText.SecondTextArr[i]);
-                    } else {
-                        errorTxt = new string[] { compareText.SecondTextArr[i], string.Empty };
-                    }
+        displayTextArr = await this.resultService.GetDisplayTextAsync(this.resultObj, this.compareText);
 
-                    displayTextArr[i, 0] = errorTxt[0];
-                    displayTextArr[i, 1] = errorTxt[1];
-                }            
-            }
+        this.resultObj.ResultState = ResultStates.FINISHED;
 
-            // fill the rest of the array
-            for (int i = this.resultObj.ErrorCount != 0 ? this.resultObj.LinesWithError.Max() + 1 : 0; i < compareText.SecondTextArr.Length; i++)
-            {
-                displayTextArr[i, 0] = compareText.SecondTextArr[i];
-            }
-            this.resultObj.ResultState = ResultStates.FINISHED;
-
-        } catch {
-            // TODO: Fix the error handling
-        }
         StateHasChanged();
     }
 
@@ -198,15 +164,8 @@
 
     private async Task CopyToClipboardAsync(TextEnum copyTextValue)
     {
-        try
-        {
-            await clipboardService.WriteTextAsync(compareText.GetFullText(copyTextValue));
-            tooltipCopyText = "Copied!";
-        } catch (Exception ex)
-        {
-            // TODO: fix the error handling in the mainlayout
-            throw new NotImplementedException();
-        }
+        await clipboardService.WriteTextAsync(compareText.GetFullText(copyTextValue));
+        tooltipCopyText = "Copied!";
     }
 
     private void SetCopyIcon(bool val, int idx)

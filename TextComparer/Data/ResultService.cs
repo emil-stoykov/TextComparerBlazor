@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.ObjectPool;
 using System.Text;
 using static TextComparer.Common.GeneralConstants;
 
@@ -47,6 +48,39 @@ namespace TextComparer.Data
             }
 
             return await Task.FromResult(new string[] { text2, string.Empty });
+        }
+
+        public async Task<string[,]> GetDisplayTextAsync(Result resultObj, CompareText compareText)
+        {
+            string[,] displayTextArr = new string[compareText.SecondTextArr.Length, 2];
+
+            // iterate over the text until the largest index is reached
+            if (resultObj.ErrorCount != 0)
+            {
+                for (int i = 0; i <= resultObj.LinesWithError.Max(); i++)
+                {
+                    string[] errorTxt = new string[2];
+                    if (resultObj.LinesWithError.Contains(i))
+                    {
+                        errorTxt = await MarkErrorPointAsync(compareText.FirstTextArr[i], compareText.SecondTextArr[i]);
+                    }
+                    else
+                    {
+                        errorTxt = new string[] { compareText.SecondTextArr[i], string.Empty };
+                    }
+
+                    displayTextArr[i, 0] = errorTxt[0];
+                    displayTextArr[i, 1] = errorTxt[1];
+                }
+            }
+
+            // fill the rest of the array
+            for (int i = resultObj.ErrorCount != 0 ? resultObj.LinesWithError.Max() + 1 : 0; i < compareText.SecondTextArr.Length; i++)
+            {
+                displayTextArr[i, 0] = compareText.SecondTextArr[i];
+            }
+
+            return displayTextArr;
         }
     }
 }

@@ -5,8 +5,21 @@
 <div class="page">
     <main>
         <article class="content px-4">
-            @Body
+            <ErrorBoundary @ref="errorBoundary" Context="Exception">
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent>
+                    <div class="alert bg-danger alert-dismissible">
+                        @Exception.Message
+                        <button class="btn btn-close" @onclick="errorBoundary.Recover"></button>
+                    </div>
+                </ErrorContent>
+            </ErrorBoundary>
         </article>
     </main>
 </div>
 
+@code {
+    private ErrorBoundary errorBoundary;
+}

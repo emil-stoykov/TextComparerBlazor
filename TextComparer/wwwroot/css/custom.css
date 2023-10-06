@@ -12,3 +12,7 @@ body {
     background-color: rgb(85, 7, 85);
     color: white;
 }
+
+.copy-icon:hover {
+    background-color: rgba(179, 179, 179);
+}

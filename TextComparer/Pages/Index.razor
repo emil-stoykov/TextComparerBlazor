@@ -28,8 +28,8 @@
                                                     @if (i == 0)
                                                     {
                                                         <i @onclick="(() => CopyToClipboardAsync(TextEnum.FIRST))"
-                                                        data-mdb-ripple-color="light"
-                                                        class="fa-solid fa-copy pt-2 pe-2 hover-overlay position-absolute top-0 end-0" style="cursor: pointer"></i>
+                                                        @onmouseover="(() => SetCopyIcon(true, 0))" @onmouseout="(() => SetCopyIcon(false, 0))"
+                                                        class="@copyIcons[0] pt-2 pe-2  position-absolute top-0 end-0" style="cursor: pointer"></i>
                                                     }
                                                 </th>
                                             </tr>
@@ -55,7 +55,8 @@
                                                     @if (i == 0)
                                                     {
                                                         <i @onclick="(() => CopyToClipboardAsync(TextEnum.SECOND))"
-                                                        class="fa-solid fa-copy pt-2 pe-2 position-absolute top-0 end-0" style="cursor: pointer"></i>
+                                                        @onmouseover="(() => SetCopyIcon(true, 1))" @onmouseout="(() => SetCopyIcon(false, 1))"
+                                                        class="@copyIcons[1] pt-2 pe-2 position-absolute top-0 end-0" style="cursor: pointer"></i>
                                                     }
                                                 </th>
                                             </tr>
@@ -123,6 +124,8 @@
     private Result resultObj = new Result();
     public string[,] displayTextArr;
     private Popup popupRef;
+    private bool isHovering = false;
+    private string[] copyIcons = { "fa-regular fa-copy", "fa-regular fa-copy" };
 
     private void ShowEmptyTextareaError()
     {
@@ -194,6 +197,12 @@
             // TODO: fix the error handling in the mainlayout
             throw new NotImplementedException();
         }
+    }
+
+    private void SetCopyIcon(bool val, int idx)
+    {
+        isHovering = val;
+        copyIcons[idx] = isHovering ? "fa-solid fa-copy" : "fa-regular fa-copy";
     }
 
 }

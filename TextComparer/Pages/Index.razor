@@ -71,7 +71,7 @@
                     </div>
                     <div class="row gy-1 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
                         <div class="col-auto col-lg-2 text-end d-grid gap-1">
-                            <button @onclick="ResetTexts" class="btn btn-dark btn-lg">Reset</button>
+                            <button @onclick="ResetTexts" class="btn btn-dark btn-lg fw-bold">Reset</button>
                         </div>
                     </div>
                 } else {
@@ -103,12 +103,12 @@
                             </div>
                             <div class="row gy-1 gap-3 p-3 m-2 mb-1 align-items-center justify-content-center">
                                 <div class="col-auto col-lg-2 text-end d-grid gap-1">
-                                    <button @onclick="ResetTexts" class="btn btn-dark btn-lg">
+                                    <button @onclick="ResetTexts" class="btn btn-dark btn-lg fw-bold">
                                         Clear Text
                                     </button>
                                 </div>
                                 <div class="col-auto col-lg-2 text-start d-grid gap-1">
-                                    <button type="submit" class="btn btn-compare btn-lg"
+                                    <button type="submit" class="btn btn-compare btn-lg fw-bold"
                                             disabled="@(resultObj.ResultState == ResultStates.FINISHED)">
                                         Compare
                                     </button>
@@ -141,8 +141,8 @@
     {
         StateHasChanged();
 
-        compareText.FirstTextArr = compareText.FirstTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        compareText.SecondTextArr = compareText.SecondTextInput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        compareText.FirstTextArr = compareText.FirstTextInput.Split('\n');
+        compareText.SecondTextArr = compareText.SecondTextInput.Split('\n');
 
         this.resultObj = await this.resultService.CheckLines(compareText.FirstTextArr, compareText.SecondTextArr);
 

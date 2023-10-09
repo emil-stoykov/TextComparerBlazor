@@ -1,2 +1,2 @@
 # TextComparerBlazor
-A simple Text Comparer app that takes two texts and compares them to one another. Displays the lines with errors and the number of invalid lines.
+A SPA program that takes two texts and compares them to eachother by highlighting error and the amount of lines with differences in them. Created by using NET 6.0 and Blazor Server by using Services, Blazor's forms, Bootstrap and SOLID principles.
